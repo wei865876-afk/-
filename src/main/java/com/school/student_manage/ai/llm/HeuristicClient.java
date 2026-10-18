@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  *   <li>拿到工具结果后，用确定性模板渲染成结构化中文回答；</li>
  *   <li>回答中明确标注"本地推理模式"，不做无依据的编造。</li>
  * </ol>
- * 这保证了"无 Key 也能完整演示、断网也能答辩"，同时避免用假数据冒充大模型输出。
+ * 这保证了"无 Key 也能完整演示、断网也能运行"，同时避免用假数据冒充大模型输出。
  */
 @Component
 public class HeuristicClient implements LlmClient {

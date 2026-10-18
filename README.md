@@ -1,6 +1,5 @@
 # 智学籍 · AI 原生学籍管理平台
 
-全国高校 AI Web 开发挑战赛参赛作品。
 在既有 **Spring Boot + MyBatis + PostgreSQL** 学籍管理系统之上，新增 **AI Agent 工具调用、RAG 制度知识库、自然语言取数（NL2SQL）、学业预警与智能洞察**，并配套一个全新的 **Vue 3 + Vite** 前台（访问 `http://localhost:8080/app/`）。
 
 > 原有学籍业务代码（controller / service / mapper / layui 页面）**零改动**，AI 能力全部收敛在 `com.school.student_manage.ai` 包内，可随时回退。
@@ -61,7 +60,7 @@ npm run build      # 产物输出到 ../src/main/resources/static/app
 | 文档 | 内容 |
 | --- | --- |
 | [docs/README.md](./docs/README.md) | 项目总览、目录结构、功能页面 |
-| [docs/01-作品说明与评分点对照.md](./docs/01-作品说明与评分点对照.md) | 赛题理解、创新点、评分点逐条对照 |
+| [docs/01-功能说明与实现对照.md](./docs/01-功能说明与实现对照.md) | 场景背景、设计主线、能力清单与实现证据 |
 | [docs/02-系统架构与AI实现.md](./docs/02-系统架构与AI实现.md) | 架构图、Agent 循环、RAG、NL2SQL 安全、降级策略 |
 | [docs/03-接口与配置手册.md](./docs/03-接口与配置手册.md) | 全部接口（REST + SSE 协议）与大模型配置 |
-| [docs/04-演示脚本.md](./docs/04-演示脚本.md) | 答辩演示动线与兜底话术 |
+| [docs/04-演示脚本.md](./docs/04-演示脚本.md) | 演示动线与常见问题应答 |

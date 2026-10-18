@@ -3,7 +3,7 @@ package com.school.student_manage.ai.prompt;
 import com.school.student_manage.ai.config.AiProperties;
 
 /**
- * 系统提示词中心。把角色设定、数据口径、安全红线、输出风格集中管理，便于评审与调优。
+ * 系统提示词中心。把角色设定、数据口径、安全红线、输出风格集中管理，便于维护与调优。
  */
 public final class Prompts {
 
