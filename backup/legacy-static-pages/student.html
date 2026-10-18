@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>学生个人中心</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/layui/2.9.10/css/layui.min.css">
+    <style>
+        .logout-box {text-align: right; padding: 15px 20px 0;}
+    </style>
+</head>
+<body>
+<div class="logout-box">
+    <a href="login.html" class="layui-btn layui-btn-sm layui-btn-primary">退出登录</a>
+</div>
+<div class="layui-container" style="margin-top:20px">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-primary" id="infoBtn">查看个人学籍</button>
+        <button class="layui-btn layui-btn-normal" id="scoreBtn">查看我的成绩</button>
+        <button class="layui-btn layui-btn-warm" id="rewardBtn">查看奖惩记录</button>
+        <button class="layui-btn layui-btn-danger" id="applyBtn">提交学籍异动</button>
+    </div>
+</div>
+
+<script src="https://cdn.staticfile.org/layui/2.9.10/layui.min.js"></script>
+<script>
+    layui.use(['layer','jquery'], function(){
+        var layer = layui.layer;
+        var $ = layui.jquery;
+        var currentUser = null;
+
+        // 获取当前登录用户
+        $.get("/user/current", function(res){
+            if(res.code === 0){
+                currentUser = res.data;
+                console.log("当前用户：", currentUser);
+            } else {
+                layer.msg("请先登录", {icon:2, time:1500}, function(){
+                    location.href = "login.html";
+                });
+            }
+        }).fail(function(){
+            layer.msg("请求失败，请重新登录", {icon:2}, function(){
+                location.href = "login.html";
+            });
+        });
+
+        // 查看学籍
+        $("#infoBtn").click(function(){
+            if(!currentUser) return;
+            $.get("/student/list", function(res){
+                if(res.code === 0 && res.data){
+                    var stu = res.data.find(function(s){ return s.stuId == currentUser.username; });
+                    if(stu){
+                        layer.open({
+                            title: "我的学籍信息",
+                            area: ['500px','320px'],
+                            content: '<div style="padding:15px">'+
+                                '<p><b>学号：</b>'+stu.stuId+'</p>'+
+                                '<p><b>姓名：</b>'+stu.stuName+'</p>'+
+                                '<p><b>班级：</b>'+(stu.className || '未知')+'</p>'+
+                                '<p><b>状态：</b>'+(stu.status || '未知')+'</p>'+
+                                '</div>'
+                        });
+                    } else {
+                        layer.msg("未找到学籍信息");
+                    }
+                }
+            });
+        });
+
+        // 查看成绩
+        $("#scoreBtn").click(function(){
+            if(!currentUser) return;
+            $.get("/score/list", { stuId: currentUser.username }, function(res){
+                if(res.code === 0){
+                    var html = '<table class="layui-table"><thead><tr><th>科目</th><th>分数</th></tr></thead><tbody>';
+                    if(res.data && res.data.length > 0){
+                        res.data.forEach(function(item){
+                            html += '<tr><td>'+item.subject+'</td><td>'+item.score+'</td></tr>';
+                        });
+                    } else {
+                        html += '<tr><td colspan="2">暂无成绩</td></tr>';
+                    }
+                    html += '</tbody></table>';
+                    layer.open({ title: "我的成绩", area: ['550px','400px'], content: html });
+                }
+            });
+        });
+
+        // 查看奖惩
+        $("#rewardBtn").click(function(){
+            if(!currentUser) return;
+            $.get("/rewardPunish/listByStuId", { stuId: currentUser.username }, function(res){
+                if(res.code === 0){
+                    var html = '<table class="layui-table"><thead><tr><th>类型</th><th>等级/奖项</th><th>金额(元)</th><th>事由</th><th>日期</th></tr></thead><tbody>';
+                    if(res.data && res.data.length > 0){
+                        res.data.forEach(function(item){
+                            html += '<tr>'+
+                                '<td>'+item.rpType+'</td>'+
+                                '<td>'+ (item.levelName || '') +'</td>'+
+                                '<td>'+ (item.amount || '') +'</td>'+
+                                '<td>'+ (item.reason || '') +'</td>'+
+                                '<td>'+ (item.rpDate || '') +'</td>'+
+                                '</tr>';
+                        });
+                    } else {
+                        html += '<tr><td colspan="5">暂无奖惩记录</td></tr>';
+                    }
+                    html += '</tbody></table>';
+                    layer.open({ title: "我的奖惩记录", area: ['650px','400px'], content: html });
+                }
+            });
+        });
+
+        // 提交异动
+        $("#applyBtn").click(function(){
+            if(!currentUser) return;
+            layer.open({
+                title: "提交异动申请",
+                area: ['520px','360px'],
+                content: `
+                    <form class="layui-form">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">异动类型</label>
+                            <div class="layui-input-block">
+                                <select id="changeType">
+                                    <option value="休学">休学</option>
+                                    <option value="复学">复学</option>
+                                    <option value="退学">退学</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">备注</label>
+                            <div class="layui-input-block">
+                                <textarea id="remark" class="layui-textarea"></textarea>
+                            </div>
+                        </div>
+                    </form>`,
+                btn: ["提交申请","关闭"],
+                yes: function(index){
+                    $.post("/change/apply/add", {
+                        stuId: currentUser.username,
+                        stuName: currentUser.realName || currentUser.username,
+                        changeType: $("#changeType").val(),
+                        remark: $("#remark").val()
+                    }, function(res){
+                        if(res.code === 0){
+                            layer.msg("申请提交成功", {icon:1}, function(){ layer.close(index); });
+                        } else {
+                            layer.msg(res.msg || "提交失败");
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

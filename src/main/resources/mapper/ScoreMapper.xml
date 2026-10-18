@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.school.student_manage.mapper.ScoreMapper">
+
+    <select id="listAll" resultType="com.school.student_manage.entity.Score">
+        SELECT
+        s.score_id,
+        s.stu_id,
+        st.stu_name,
+        s.course_name AS subject,
+        s.score
+        FROM score s
+        LEFT JOIN student st ON s.stu_id = st.stu_id
+        ORDER BY s.score_id DESC
+    </select>
+
+    <!-- 新增：按学号查询成绩 -->
+    <select id="listByStuId" resultType="com.school.student_manage.entity.Score">
+        SELECT
+        s.score_id,
+        s.stu_id,
+        st.stu_name,
+        s.course_name AS subject,
+        s.score
+        FROM score s
+        LEFT JOIN student st ON s.stu_id = st.stu_id
+        WHERE s.stu_id = #{stuId}
+        ORDER BY s.score_id DESC
+    </select>
+
+    <update id="updateScore">
+        UPDATE score
+        SET course_name = #{subject}, score = #{score}
+        WHERE score_id = #{scoreId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM score WHERE score_id = #{scoreId}
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="scoreId">
+        INSERT INTO score (stu_id, course_name, score)
+        VALUES (#{stuId}, #{subject}, #{score})
+    </insert>
+</mapper>

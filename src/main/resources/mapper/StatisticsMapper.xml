@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.school.student_manage.mapper.StatisticsMapper">
+
+    <select id="selectClassScoreStat" resultType="java.util.Map">
+        SELECT
+        c.class_name AS "className",
+        ROUND(AVG(sc.score), 2) AS "avgScore",
+        ROUND(SUM(CASE WHEN sc.score >= 60 THEN 1 ELSE 0 END)*1.0/COUNT(*)*100, 2) AS "passRate",
+        MAX(sc.score) AS "maxScore",
+        MIN(sc.score) AS "minScore"
+        FROM student s
+        LEFT JOIN "class" c ON s.class_id = c.class_id
+        LEFT JOIN score sc ON s.stu_id = sc.stu_id
+        GROUP BY c.class_name
+        ORDER BY c.class_name
+    </select>
+</mapper>

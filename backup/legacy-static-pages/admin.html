@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>高校学籍管理系统</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/layui/2.9.10/css/layui.min.css">
+    <style>
+        .page-content {display: none;}
+        .page-content:first-of-type {display: block;}
+        .layui-logo {color: #fff; font-size: 18px; font-weight: 500; padding: 0 20px; line-height: 60px;}
+        .layui-nav-img {width: 36px; height: 36px; line-height: 36px; text-align: center; background: #1e9fff; color: #fff; border-radius: 50%; display: inline-block;}
+    </style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <!-- 顶部导航 -->
+    <div class="layui-header">
+        <div class="layui-logo">高校学籍管理系统</div>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <span class="layui-nav-img">管</span>
+                    系统管理员
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="javascript:;">个人资料</a></dd>
+                    <dd><a href="javascript:;">修改密码</a></dd>
+                    <dd><a href="login.html">退出登录</a></dd>
+                </dl>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 左侧菜单 -->
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree" lay-filter="sideMenu">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;">基础信息管理</a>
+                    <dl class="layui-nav-child">
+                        <dd class="layui-this"><a href="javascript:;" data-menu="deptManage" data-title="院系管理">院系管理</a></dd>
+                        <dd><a href="javascript:;" data-menu="majorManage" data-title="专业管理">专业管理</a></dd>
+                        <dd><a href="javascript:;" data-menu="classManage" data-title="班级管理">班级管理</a></dd>
+                        <dd><a href="javascript:;" data-menu="genderStat" data-title="男女生统计">男女生统计</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">学籍管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" data-menu="stuList" data-title="学生名单管理">学生名单</a></dd>
+                        <dd><a href="javascript:;" data-menu="addStu" data-title="新增学籍">新增学籍</a></dd>
+                        <dd><a href="javascript:;" data-menu="stuArchive" data-title="学籍档案管理">学籍档案</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">成绩管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" data-menu="scoreInput" data-title="成绩录入">成绩录入</a></dd>
+                        <dd><a href="javascript:;" data-menu="scoreStat" data-title="班级成绩统计">班级成绩统计</a></dd>
+                        <dd><a href="javascript:;" data-menu="scoreQuery" data-title="学生成绩查询">成绩查询</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">奖惩管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" data-menu="rewardManage" data-title="学生奖惩管理">奖惩记录</a></dd>
+                        <dd><a href="javascript:;" data-menu="greedyAllocate" data-title="贪心算法奖励分配">智能分配</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">学籍异动</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" data-menu="changeApply" data-title="异动申请">异动申请</a></dd>
+                        <dd><a href="javascript:;" data-menu="changeCheck" data-title="异动审核">异动审核</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">系统管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" data-menu="userManage" data-title="用户管理">用户管理</a></dd>
+                        <dd><a href="javascript:;" data-menu="dictManage" data-title="数据字典">数据字典</a></dd>
+                        <dd><a href="javascript:;" data-menu="logManage" data-title="操作日志">操作日志</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="layui-body">
+        <div style="padding: 15px;">
+            <blockquote class="layui-elem-quote" id="pageTitle">院系管理</blockquote>
+
+            <!-- 1 院系管理 -->
+            <div class="page-content" id="page-deptManage">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <button class="layui-btn" id="deptAddBtn">新增院系</button>
+                        <div style="margin-top:15px">
+                            <table id="deptTable" lay-filter="deptTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2 专业管理 -->
+            <div class="page-content" id="page-majorManage">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <button class="layui-btn" id="majorAddBtn">新增专业</button>
+                        <div style="margin-top:15px">
+                            <table id="majorTable" lay-filter="majorTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3 班级管理 -->
+            <div class="page-content" id="page-classManage">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <button class="layui-btn" id="classAddBtn">新增班级</button>
+                        <div style="margin-top:15px">
+                            <table id="classTable" lay-filter="classTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 学生名单 -->
+            <div class="page-content" id="page-stuList">
+                <button class="layui-btn" id="addBtn">新增学籍</button>
+                <button class="layui-btn layui-btn-normal" id="scoreStatBtn">班级成绩统计</button>
+                <button class="layui-btn layui-btn-warm" id="changeCheckBtn">学籍异动审核</button>
+                <div style="margin-top:15px">
+                    <table id="stuTable" lay-filter="stuTable"></table>
+                </div>
+            </div>
+
+            <!-- 5 新增学籍 -->
+            <div class="page-content" id="page-addStu">
+                <div class="layui-card">
+                    <div class="layui-card-header">新增学籍信息</div>
+                    <div class="layui-card-body" style="max-width: 600px;">
+                        <form class="layui-form" lay-filter="addStuForm">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">学号</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="stuId" required lay-verify="required" placeholder="请输入学号" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">姓名</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="stuName" required lay-verify="required" placeholder="请输入姓名" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">所属班级</label>
+                                <div class="layui-input-inline">
+                                    <select name="classId" id="addStuClassSelect">
+                                        <option value="">请选择班级</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">性别</label>
+                                <div class="layui-input-block">
+                                    <input type="radio" name="gender" value="男" title="男" checked>
+                                    <input type="radio" name="gender" value="女" title="女">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">学籍状态</label>
+                                <div class="layui-input-block">
+                                    <input type="radio" name="status" value="在读" title="在读" checked>
+                                    <input type="radio" name="status" value="休学" title="休学">
+                                    <input type="radio" name="status" value="退学" title="退学">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="addStuSubmit">保存学籍</button>
+                                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6 学籍档案 -->
+            <div class="page-content" id="page-stuArchive">
+                <div class="layui-card">
+                    <div class="layui-card-header">学籍档案管理</div>
+                    <div class="layui-card-body">
+                        <button class="layui-btn" id="archiveAddBtn">档案上传</button>
+                        <div style="margin-top:15px">
+                            <table id="archiveTable" lay-filter="archiveTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7 成绩录入 -->
+            <div class="page-content" id="page-scoreInput">
+                <div class="layui-card">
+                    <div class="layui-card-header">成绩录入</div>
+                    <div class="layui-card-body">
+                        <button class="layui-btn" id="scoreAddBtn">新增成绩</button>
+                        <div style="margin-top:15px">
+                            <table id="scoreInputTable" lay-filter="scoreInputTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8 班级成绩统计 -->
+            <div class="page-content" id="page-scoreStat">
+                <div class="layui-card">
+                    <div class="layui-card-header">班级成绩统计</div>
+                    <div class="layui-card-body">
+                        <div style="margin-top:15px">
+                            <table id="scoreStatTable" lay-filter="scoreStatTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9 成绩查询 -->
+            <div class="page-content" id="page-scoreQuery">
+                <div class="layui-card">
+                    <div class="layui-card-header">学生成绩查询</div>
+                    <div class="layui-card-body">
+                        <div class="layui-form-item" style="display: inline-block;">
+                            <input class="layui-input" style="width:200px;display:inline-block;" placeholder="输入学号查询" id="searchStuId">
+                            <button class="layui-btn" id="searchScore">查询</button>
+                        </div>
+                        <div style="margin-top:15px">
+                            <table id="scoreQueryTable" lay-filter="scoreQueryTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 10 奖惩记录管理 -->
+            <div class="page-content" id="page-rewardManage">
+                <div class="layui-card">
+                    <div class="layui-card-header">学生奖惩管理</div>
+                    <div class="layui-card-body">
+                        <button class="layui-btn" id="rewardAddBtn">新增奖惩记录</button>
+                        <div style="margin-top:15px">
+                            <table id="rewardTable" lay-filter="rewardTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 11 贪心算法智能分配 -->
+            <div class="page-content" id="page-greedyAllocate">
+                <div class="layui-card">
+                    <div class="layui-card-header">贪心算法智能奖励分配</div>
+                    <div class="layui-card-body">
+                        <form class="layui-form" lay-filter="allocateForm">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">一等奖</label>
+                                <div class="layui-input-inline">
+                                    <input type="number" name="level1Quota" placeholder="名额" value="2" class="layui-input">
+                                </div>
+                                <div class="layui-input-inline">
+                                    <input type="number" name="level1Amount" placeholder="奖金(元)" value="5000" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">二等奖</label>
+                                <div class="layui-input-inline">
+                                    <input type="number" name="level2Quota" placeholder="名额" value="5" class="layui-input">
+                                </div>
+                                <div class="layui-input-inline">
+                                    <input type="number" name="level2Amount" placeholder="奖金(元)" value="3000" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">三等奖</label>
+                                <div class="layui-input-inline">
+                                    <input type="number" name="level3Quota" placeholder="名额" value="10" class="layui-input">
+                                </div>
+                                <div class="layui-input-inline">
+                                    <input type="number" name="level3Amount" placeholder="奖金(元)" value="1000" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="startAllocate">开始贪心分配</button>
+                                    <button class="layui-btn layui-btn-normal" id="saveAllocateBtn" disabled>保存全部奖惩记录</button>
+                                </div>
+                            </div>
+                        </form>
+                        <div style="margin-top:20px">
+                            <h3>分配结果</h3>
+                            <table id="allocateResultTable" lay-filter="allocateResultTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 12 异动申请 -->
+            <div class="page-content" id="page-changeApply">
+                <div class="layui-card">
+                    <div class="layui-card-header">异动申请</div>
+                    <div class="layui-card-body">
+                        <button class="layui-btn" id="applyAddBtn">提交异动申请</button>
+                        <div style="margin-top:15px">
+                            <table id="applyTable" lay-filter="applyTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 13 异动审核 -->
+            <div class="page-content" id="page-changeCheck">
+                <div class="layui-card">
+                    <div class="layui-card-header">学籍异动审核</div>
+                    <div class="layui-card-body">
+                        <div style="margin-top:15px">
+                            <table id="checkTable" lay-filter="checkTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 14 用户管理 -->
+            <div class="page-content" id="page-userManage">
+                <div class="layui-card">
+                    <div class="layui-card-header">系统用户管理</div>
+                    <div class="layui-card-body">
+                        <button class="layui-btn" id="userAddBtn">新增管理员</button>
+                        <div style="margin-top:15px">
+                            <table id="userTable" lay-filter="userTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 15 数据字典 -->
+            <div class="page-content" id="page-dictManage">
+                <div class="layui-card">
+                    <div class="layui-card-header">数据字典</div>
+                    <div class="layui-card-body">
+                        <button class="layui-btn" id="dictAddBtn">新增字典项</button>
+                        <div style="margin-top:15px">
+                            <table id="dictTable" lay-filter="dictTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 16 操作日志 -->
+            <div class="page-content" id="page-logManage">
+                <div class="layui-card">
+                    <div class="layui-card-header">系统操作日志</div>
+                    <div class="layui-card-body">
+                        <div style="margin-top:15px">
+                            <table id="logTable" lay-filter="logTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 17 男女生统计 -->
+            <div class="page-content" id="page-genderStat">
+                <div class="layui-card">
+                    <div class="layui-card-header">各院系/专业男女人数统计</div>
+                    <div class="layui-card-body">
+                        <table id="genderStatTable" lay-filter="genderStatTable"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-footer">© 2026 高校学籍管理系统 - 后台管理端</div>
+</div>
+
+<!-- 操作按钮模板 -->
+<script type="text/html" id="operBar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="auditBar">
+    <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="pass">通过</a>
+    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="reject">驳回</a>
+</script>
+
+<script src="https://cdn.staticfile.org/layui/2.9.10/layui.min.js"></script>
+<script>
+    layui.use(['table','layer','form','jquery','element'], function(){
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+        var $ = layui.jquery;
+        var allocateResultList = [];
+
+        // 动态加载班级下拉框
+        function loadClassOptions(){
+            $.get("/class/list", function(res){
+                if(res.code === 0 && res.data){
+                    var options = '<option value="">请选择班级</option>';
+                    res.data.forEach(function(item){
+                        options += '<option value="'+ item.classId +'">'+ item.className +'</option>';
+                    });
+                    $("#addStuClassSelect").html(options);
+                    form.render('select');
+                }
+            });
+        }
+
+        // ========== 菜单切换 ==========
+        $(document).on('click', '.layui-nav-child dd a', function(){
+            var menuId = $(this).data("menu");
+            var title = $(this).data("title");
+            if(menuId){
+                $(".page-content").hide();
+                $("#page-" + menuId).show();
+                $("#pageTitle").text(title);
+                if(menuId === 'addStu'){
+                    loadClassOptions();
+                }
+                form.render();
+            }
+        });
+
+        // ========== 快捷按钮跳转 ==========
+        $("#addBtn").click(function(){
+            $(".page-content").hide();
+            $("#page-addStu").show();
+            $("#pageTitle").text("新增学籍");
+            loadClassOptions();
+            form.render();
+        });
+        $("#scoreStatBtn").click(function(){
+            $(".page-content").hide();
+            $("#page-scoreStat").show();
+            $("#pageTitle").text("班级成绩统计");
+        });
+        $("#changeCheckBtn").click(function(){
+            $(".page-content").hide();
+            $("#page-changeCheck").show();
+            $("#pageTitle").text("学籍异动审核");
+        });
+
+        // ========== 1. 院系管理 ==========
+        table.render({
+            elem: '#deptTable',
+            url: '/department/list',
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'deptId', title:'院系ID', width:120, align:'center'},
+                {field:'deptName', title:'院系名称', minWidth:300, align:'center'},
+                {title:'操作', toolbar:'#operBar', width:180, align:'center', fixed:'right'}
+            ]]
+        });
+
+        $("#deptAddBtn").click(function(){
+            layer.open({
+                type: 1,
+                title: '新增院系',
+                area: ['450px', '220px'],
+                content: '<div style="padding:20px;">'+
+                    '<div class="layui-form-item"><label>院系名称</label><input class="layui-input" id="deptNameInput" placeholder="请输入院系名称"></div>'+
+                    '</div>',
+                btn: ['保存', '取消'],
+                yes: function(index){
+                    var name = $("#deptNameInput").val().trim();
+                    if(!name){
+                        layer.msg("请输入院系名称");
+                        return;
+                    }
+                    $.ajax({
+                        url: "/department/add",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({deptName: name}),
+                        success: function(res){
+                            if(res.code === 0){
+                                layer.msg("新增成功");
+                                table.reload("deptTable");
+                                layer.close(index);
+                            } else {
+                                layer.msg(res.msg || "新增失败");
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // ========== 2. 专业管理 ==========
+        table.render({
+            elem: '#majorTable',
+            url: '/major/list',
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'majorId', title:'专业ID', width:120, align:'center'},
+                {field:'majorName', title:'专业名称', minWidth:250, align:'center'},
+                {field:'deptId', title:'所属院系ID', width:150, align:'center'},
+                {title:'操作', toolbar:'#operBar', width:180, align:'center', fixed:'right'}
+            ]]
+        });
+
+        $("#majorAddBtn").click(function(){
+            layer.open({
+                type: 1,
+                title: '新增专业',
+                area: ['450px', '300px'],
+                content: '<div style="padding:20px;">'+
+                    '<div class="layui-form-item"><label>专业名称</label><input class="layui-input" id="majorNameInput" placeholder="请输入专业名称"></div>'+
+                    '<div class="layui-form-item"><label>所属院系ID</label><input class="layui-input" id="majorDeptInput" placeholder="请输入院系ID"></div>'+
+                    '</div>',
+                btn: ['保存', '取消'],
+                yes: function(index){
+                    var name = $("#majorNameInput").val().trim();
+                    var deptId = $("#majorDeptInput").val().trim();
+                    if(!name || !deptId){
+                        layer.msg("请填写完整信息");
+                        return;
+                    }
+                    $.ajax({
+                        url: "/major/add",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({majorName: name, deptId: deptId}),
+                        success: function(res){
+                            if(res.code === 0){
+                                layer.msg("新增成功");
+                                table.reload("majorTable");
+                                layer.close(index);
+                            } else {
+                                layer.msg(res.msg || "新增失败");
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // ========== 3. 班级管理 ==========
+        table.render({
+            elem: '#classTable',
+            url: '/class/list',
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'classId', title:'班级ID', width:120, align:'center'},
+                {field:'className', title:'班级名称', minWidth:250, align:'center'},
+                {field:'majorId', title:'所属专业ID', width:150, align:'center'},
+                {field:'studentCount', title:'学生人数', width:120, align:'center'},
+                {title:'操作', toolbar:'#operBar', width:180, align:'center', fixed:'right'}
+            ]]
+        });
+
+        $("#classAddBtn").click(function(){
+            layer.open({
+                type: 1,
+                title: '新增班级',
+                area: ['450px', '300px'],
+                content: '<div style="padding:20px;">'+
+                    '<div class="layui-form-item"><label>班级名称</label><input class="layui-input" id="classNameInput" placeholder="请输入班级名称"></div>'+
+                    '<div class="layui-form-item"><label>所属专业ID</label><input class="layui-input" id="classMajorInput" placeholder="请输入专业ID"></div>'+
+                    '</div>',
+                btn: ['保存', '取消'],
+                yes: function(index){
+                    var name = $("#classNameInput").val().trim();
+                    var majorId = $("#classMajorInput").val().trim();
+                    if(!name || !majorId){
+                        layer.msg("请填写完整信息");
+                        return;
+                    }
+                    $.ajax({
+                        url: "/class/add",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({className: name, majorId: majorId}),
+                        success: function(res){
+                            if(res.code === 0){
+                                layer.msg("新增成功");
+                                table.reload("classTable");
+                                layer.close(index);
+                            } else {
+                                layer.msg(res.msg || "新增失败");
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // ========== 4. 学生名单表格 ==========
+        table.render({
+            elem: '#stuTable',
+            url: '/student/list',
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'stuId', title:'学号', width:120, align:'center'},
+                {field:'stuName', title:'姓名', width:80, align:'center'},
+                {field:'gender', title:'性别', width:60, align:'center'},
+                {field:'className', title:'班级', width:130, align:'center'},
+                {field:'major', title:'专业', width:130, align:'center'},
+                {field:'dept', title:'院系', width:120, align:'center'},
+                {field:'status', title:'状态', width:80, align:'center'},
+                {title:'操作', toolbar:'#operBar', width:150, align:'center'}
+            ]]
+        });
+
+        // ========== 5. 学籍档案表格 ==========
+        table.render({
+            elem: '#archiveTable',
+            url: '/archive/list',
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'id', title:'ID', width:60, align:'center'},
+                {field:'stuId', title:'学号', width:120, align:'center'},
+                {field:'stuName', title:'姓名', width:120, align:'center'},
+                {field:'fileUrl', title:'档案文件', width:260, align:'center'},
+                {field:'uploadTime', title:'上传时间', width:180, align:'center'},
+                {title:'操作', toolbar:'#operBar', width:180, align:'center'}
+            ]]
+        });
+
+        $("#archiveAddBtn").click(function(){
+            layer.open({
+                type: 1,
+                title: '上传学籍档案',
+                area: ['450px', '250px'],
+                content: '<div style="padding:20px;">'+
+                    '<div class="layui-form-item"><label>学号</label><input class="layui-input" id="archiveStuId"></div>'+
+                    '<div class="layui-form-item"><label>姓名</label><input class="layui-input" id="archiveStuName"></div>'+
+                    '<div class="layui-form-item"><label>文件URL</label><input class="layui-input" id="archiveFileUrl"></div>'+
+                    '</div>',
+                btn: ['保存', '取消'],
+                yes: function(index){
+                    $.post("/archive/add", {
+                        stuId: $("#archiveStuId").val(),
+                        stuName: $("#archiveStuName").val(),
+                        fileUrl: $("#archiveFileUrl").val()
+                    }, function(res){
+                        if(res.code === 0){
+                            layer.msg("上传成功");
+                            table.reload("archiveTable");
+                            layer.close(index);
+                        } else {
+                            layer.msg("上传失败");
+                        }
+                    });
+                }
+            });
+        });
+
+        // ========== 6. 成绩录入表格 ==========
+        table.render({
+            elem: '#scoreInputTable',
+            url: '/score/list',
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'scoreId', title:'ID', width:60, align:'center'},
+                {field:'stuId', title:'学号', width:120, align:'center'},
+                {field:'stuName', title:'姓名', width:120, align:'center'},
+                {field:'subject', title:'科目', width:160, align:'center'},
+                {field:'score', title:'分数', width:100, align:'center'},
+                {title:'操作', toolbar:'#operBar', width:180, align:'center'}
+            ]]
+        });
+
+        $("#scoreAddBtn").click(function(){
+            layer.open({
+                type: 1,
+                title: '新增成绩',
+                area: ['450px', '280px'],
+                content: '<div style="padding:20px;">'+
+                    '<div class="layui-form-item"><label>学号</label><input class="layui-input" id="scoreAddStuId"></div>'+
+                    '<div class="layui-form-item"><label>科目</label><input class="layui-input" id="scoreAddSubject"></div>'+
+                    '<div class="layui-form-item"><label>分数</label><input class="layui-input" id="scoreAddValue"></div>'+
+                    '</div>',
+                btn: ['保存', '取消'],
+                yes: function(index){
+                    $.post("/score/add", {
+                        stuId: $("#scoreAddStuId").val(),
+                        subject: $("#scoreAddSubject").val(),
+                        score: $("#scoreAddValue").val()
+                    }, function(res){
+                        if(res.code === 0){
+                            layer.msg("新增成功");
+                            table.reload("scoreInputTable");
+                            layer.close(index);
+                        } else {
+                            layer.msg(res.msg || "新增失败");
+                        }
+                    });
+                }
+            });
+        });
+
+        // ========== 7. 班级成绩统计表格 ==========
+        table.render({
+            elem: '#scoreStatTable',
+            url: '/score/stat',
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'className', title:'班级', width:160, align:'center'},
+                {field:'avgScore', title:'平均分', width:120, align:'center'},
+                {field:'passRate', title:'及格率(%)', width:120, align:'center'},
+                {field:'maxScore', title:'最高分', width:120, align:'center'},
+                {field:'minScore', title:'最低分', width:120, align:'center'}
+            ]]
+        });
+
+        // ========== 8. 成绩查询表格 ==========
+        table.render({
+            elem: '#scoreQueryTable',
+            url: '/score/list',
+            where:{stuId:""},
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'stuId', title:'学号', width:120, align:'center'},
+                {field:'stuName', title:'姓名', width:120, align:'center'},
+                {field:'subject', title:'科目', width:160, align:'center'},
+                {field:'score', title:'分数', width:100, align:'center'}
+            ]]
+        });
+        $("#searchScore").click(function(){
+            let sid = $("#searchStuId").val().trim();
+            table.reload("scoreQueryTable",{where:{stuId:sid}});
+        });
+
+        // ========== 9. 奖惩记录表格 ==========
+        table.render({
+            elem: '#rewardTable',
+            url: '/rewardPunish/list',
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'rpId', title:'ID', width:80, align:'center'},
+                {field:'stuId', title:'学号', width:120, align:'center'},
+                {field:'stuName', title:'姓名', width:120, align:'center'},
+                {field:'rpType', title:'类型', width:100, align:'center'},
+                {field:'levelName', title:'等级/奖项', width:140, align:'center'},
+                {field:'amount', title:'金额(元)', width:120, align:'center'},
+                {field:'reason', title:'事由', minWidth:200, align:'center'},
+                {title:'操作', toolbar:'#operBar', width:180, align:'center', fixed:'right'}
+            ]]
+        });
+
+        $("#rewardAddBtn").click(function(){
+            layer.open({
+                type: 1,
+                title: '新增奖惩记录',
+                area: ['500px', '420px'],
+                content: '<div style="padding:20px;">'+
+                    '<div class="layui-form-item"><label>学号</label><input class="layui-input" id="rpStuId" placeholder="请输入学号"></div>'+
+                    '<div class="layui-form-item"><label>姓名</label><input class="layui-input" id="rpStuName" placeholder="请输入姓名"></div>'+
+                    '<div class="layui-form-item"><label>类型</label><select id="rpType"><option value="奖励">奖励</option><option value="惩罚">惩罚</option></select></div>'+
+                    '<div class="layui-form-item"><label>等级/奖项</label><input class="layui-input" id="rpLevelName" placeholder="如：一等奖学金"></div>'+
+                    '<div class="layui-form-item"><label>金额(元)</label><input class="layui-input" id="rpAmount" value="0"></div>'+
+                    '<div class="layui-form-item"><label>事由</label><textarea class="layui-textarea" id="rpReason"></textarea></div>'+
+                    '</div>',
+                btn: ['保存', '取消'],
+                yes: function(index){
+                    $.ajax({
+                        url: "/rewardPunish/add",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            stuId: $("#rpStuId").val().trim(),
+                            stuName: $("#rpStuName").val().trim(),
+                            rpType: $("#rpType").val(),
+                            levelName: $("#rpLevelName").val().trim(),
+                            amount: $("#rpAmount").val(),
+                            reason: $("#rpReason").val().trim()
+                        }),
+                        success: function(res){
+                            if(res.code === 0){
+                                layer.msg("新增成功");
+                                table.reload("rewardTable");
+                                layer.close(index);
+                            } else {
+                                layer.msg(res.msg || "新增失败");
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // ========== 10. 贪心算法分配 ==========
+        var allocateTableIns = null;
+        form.on('submit(startAllocate)', function(data){
+            $.ajax({
+                url: "/rewardPunish/greedyAllocate",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(data.field),
+                success: function(res){
+                    if(res.code === 0){
+                        allocateResultList = res.data;
+                        layer.msg("分配完成，共生成"+ res.data.length +"条奖励记录");
+                        $("#saveAllocateBtn").prop("disabled", false);
+
+                        if(!allocateTableIns){
+                            allocateTableIns = table.render({
+                                elem: '#allocateResultTable',
+                                data: res.data,
+                                page: false,
+                                cols: [[
+                                    {field:'stuId', title:'学号', width:140, align:'center'},
+                                    {field:'stuName', title:'姓名', width:120, align:'center'},
+                                    {field:'levelName', title:'奖励等级', width:140, align:'center'},
+                                    {field:'amount', title:'奖金(元)', width:120, align:'center'},
+                                    {field:'reason', title:'说明', minWidth:250, align:'center'}
+                                ]]
+                            });
+                        } else {
+                            table.reload('allocateResultTable', {data: res.data});
+                        }
+                    } else {
+                        layer.msg(res.msg || "分配失败");
+                    }
+                }
+            });
+            return false;
+        });
+
+        $("#saveAllocateBtn").click(function(){
+            if(allocateResultList.length === 0){
+                layer.msg("请先执行分配");
+                return;
+            }
+            $.ajax({
+                url: "/rewardPunish/batchSave",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(allocateResultList),
+                success: function(res){
+                    if(res.code === 0){
+                        layer.msg(res.msg);
+                        table.reload("rewardTable");
+                    } else {
+                        layer.msg(res.msg || "保存失败");
+                    }
+                }
+            });
+        });
+
+        // ========== 11. 异动申请表格 ==========
+        table.render({
+            elem: '#applyTable',
+            url: '/change/apply/list',
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'applyId', title:'申请ID', width:80, align:'center'},
+                {field:'stuId', title:'学号', width:120, align:'center'},
+                {field:'stuName', title:'姓名', width:100, align:'center'},
+                {field:'changeType', title:'异动类型', width:120, align:'center'},
+                {field:'remark', title:'备注', width:200, align:'center'},
+                {field:'status', title:'审核状态', width:100, align:'center'},
+                {field:'submitTime', title:'提交时间', width:180, align:'center'}
+            ]]
+        });
+
+        $("#applyAddBtn").click(function(){
+            layer.open({
+                type: 1,
+                title: '提交异动申请',
+                area: ['500px', '350px'],
+                content: '<div style="padding:20px;">'+
+                    '<div class="layui-form-item"><label>学号</label><input class="layui-input" id="applyStuId"></div>'+
+                    '<div class="layui-form-item"><label>姓名</label><input class="layui-input" id="applyStuName"></div>'+
+                    '<div class="layui-form-item"><label>异动类型</label>'+
+                    '<select id="applyType"><option value="休学">休学</option><option value="复学">复学</option><option value="退学">退学</option></select></div>'+
+                    '<div class="layui-form-item"><label>备注</label><textarea id="applyRemark" class="layui-textarea"></textarea></div>'+
+                    '</div>',
+                btn: ['提交', '取消'],
+                yes: function(index){
+                    $.post("/change/apply/add", {
+                        stuId: $("#applyStuId").val(),
+                        stuName: $("#applyStuName").val(),
+                        changeType: $("#applyType").val(),
+                        remark: $("#applyRemark").val()
+                    }, function(res){
+                        if(res.code === 0){
+                            layer.msg("提交成功");
+                            table.reload("applyTable");
+                            layer.close(index);
+                        } else {
+                            layer.msg(res.msg || "提交失败");
+                        }
+                    });
+                }
+            });
+        });
+
+        // ========== 12. 异动审核表格 ==========
+        table.render({
+            elem: '#checkTable',
+            url: '/change/check/list',
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'applyId', title:'申请ID', width:80, align:'center'},
+                {field:'stuId', title:'学号', width:120, align:'center'},
+                {field:'stuName', title:'姓名', width:100, align:'center'},
+                {field:'changeType', title:'异动类型', width:120, align:'center'},
+                {field:'remark', title:'备注', width:200, align:'center'},
+                {field:'submitTime', title:'提交时间', width:180, align:'center'},
+                {title:'操作', toolbar:'#auditBar', width:150, align:'center'}
+            ]]
+        });
+
+        // ========== 13. 用户管理表格 ==========
+        table.render({
+            elem: '#userTable',
+            url: '/user/list',
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'id', title:'ID', width:60, align:'center'},
+                {field:'username', title:'账号', width:120, align:'center'},
+                {field:'realName', title:'姓名', width:100, align:'center'},
+                {field:'role', title:'角色', width:100, align:'center'},
+                {field:'createTime', title:'创建时间', width:180, align:'center'},
+                {title:'操作', toolbar:'#operBar', width:150, align:'center'}
+            ]]
+        });
+
+        $("#userAddBtn").click(function(){
+            layer.open({
+                type: 1,
+                title: '新增管理员',
+                area: ['450px', '350px'],
+                content: '<div style="padding:20px;">'+
+                    '<div class="layui-form-item"><label>账号</label><input class="layui-input" id="newUsername"></div>'+
+                    '<div class="layui-form-item"><label>密码</label><input class="layui-input" type="password" id="newPassword"></div>'+
+                    '<div class="layui-form-item"><label>姓名</label><input class="layui-input" id="newRealName"></div>'+
+                    '<div class="layui-form-item"><label>角色</label><select id="newRole"><option value="admin">管理员</option><option value="student">学生</option></select></div>'+
+                    '</div>',
+                btn: ['保存', '取消'],
+                yes: function(index){
+                    $.post("/user/add", {
+                        username: $("#newUsername").val(),
+                        password: $("#newPassword").val(),
+                        realName: $("#newRealName").val(),
+                        role: $("#newRole").val()
+                    }, function(res){
+                        if(res.code === 0){
+                            layer.msg("添加成功");
+                            table.reload("userTable");
+                            layer.close(index);
+                        } else {
+                            layer.msg(res.msg || "添加失败");
+                        }
+                    });
+                }
+            });
+        });
+
+        // ========== 14. 数据字典表格 ==========
+        table.render({
+            elem: '#dictTable',
+            url: '/dict/list',
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'id', title:'ID', width:60, align:'center'},
+                {field:'dictKey', title:'字典键', width:150, align:'center'},
+                {field:'dictValue', title:'字典值', width:200, align:'center'},
+                {field:'sort', title:'排序', width:80, align:'center'},
+                {title:'操作', toolbar:'#operBar', width:150, align:'center'}
+            ]]
+        });
+
+        $("#dictAddBtn").click(function(){
+            layer.open({
+                type: 1,
+                title: '新增字典项',
+                area: ['450px', '300px'],
+                content: '<div style="padding:20px;">'+
+                    '<div class="layui-form-item"><label>键</label><input class="layui-input" id="dictKeyInput"></div>'+
+                    '<div class="layui-form-item"><label>值</label><input class="layui-input" id="dictValueInput"></div>'+
+                    '<div class="layui-form-item"><label>排序</label><input class="layui-input" id="dictSortInput" value="0"></div>'+
+                    '</div>',
+                btn: ['保存', '取消'],
+                yes: function(index){
+                    $.post("/dict/add", {
+                        dictKey: $("#dictKeyInput").val(),
+                        dictValue: $("#dictValueInput").val(),
+                        sort: $("#dictSortInput").val()
+                    }, function(res){
+                        if(res.code === 0){
+                            layer.msg("添加成功");
+                            table.reload("dictTable");
+                            layer.close(index);
+                        } else {
+                            layer.msg(res.msg || "添加失败");
+                        }
+                    });
+                }
+            });
+        });
+
+        // ========== 15. 操作日志表格 ==========
+        table.render({
+            elem: '#logTable',
+            url: '/log/list',
+            page: true,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, count: res.data ? res.data.length : 0, data: res.data};
+            },
+            cols: [[
+                {field:'id', title:'ID', width:60, align:'center'},
+                {field:'username', title:'操作人', width:100, align:'center'},
+                {field:'operDesc', title:'操作描述', width:300, align:'center'},
+                {field:'operTime', title:'操作时间', width:180, align:'center'},
+                {field:'ip', title:'IP地址', width:130, align:'center'}
+            ]]
+        });
+
+        // ========== 16. 男女生统计表格 ==========
+        table.render({
+            elem: '#genderStatTable',
+            url: '/genderStats/list',
+            page: false,
+            parseData: function(res){
+                return {code: res.code, msg: res.msg, data: res.data};
+            },
+            cols: [[
+                {field:'dept_name', title:'院系', width:200, align:'center'},
+                {field:'major_name', title:'专业', width:200, align:'center'},
+                {field:'male_count', title:'男生人数', width:120, align:'center'},
+                {field:'female_count', title:'女生人数', width:120, align:'center'}
+            ]]
+        });
+
+        // ========== 新增学籍表单提交 ==========
+        form.on('submit(addStuSubmit)', function(data){
+            $.post("/student/add", data.field, function(res){
+                if(res.code === 0){
+                    layer.msg("学籍新增成功", {icon: 1});
+                    table.reload("stuTable");
+                    $(".page-content").hide();
+                    $("#page-stuList").show();
+                    $("#pageTitle").text("学生名单管理");
+                    form.render();
+                } else {
+                    layer.msg(res.msg || "新增失败", {icon: 2});
+                }
+            });
+            return false;
+        });
+
+        // ========== 通用表格工具事件（编辑+删除+审核） ==========
+        function handleTableTool(obj){
+            var d = obj.data;
+            var tableId = obj.config.id;
+
+            // ========== 编辑 ==========
+            if(obj.event === 'edit'){
+                if(tableId === 'scoreInputTable'){
+                    layer.open({
+                        type: 1,
+                        title: '编辑成绩',
+                        area: ['460px', '300px'],
+                        content: '<div style="padding:22px;">'+
+                            '<div class="layui-form-item"><label class="layui-form-label">科目</label><div class="layui-input-block"><input class="layui-input" id="editSubject" value="'+ d.subject +'"></div></div>'+
+                            '<div class="layui-form-item"><label class="layui-form-label">分数</label><div class="layui-input-block"><input class="layui-input" id="editScoreVal" value="'+ d.score +'"></div></div>'+
+                            '<input type="hidden" id="editScoreId" value="'+ d.scoreId +'">'+
+                            '</div>',
+                        btn: ['保存', '取消'],
+                        yes: function(index){
+                            $.post("/score/update", {
+                                scoreId: $("#editScoreId").val(),
+                                subject: $("#editSubject").val().trim(),
+                                score: $("#editScoreVal").val().trim()
+                            }, function(res){
+                                if(res.code === 0){
+                                    layer.msg("修改成功");
+                                    table.reload("scoreInputTable");
+                                    layer.close(index);
+                                } else {
+                                    layer.msg("修改失败");
+                                }
+                            });
+                        }
+                    });
+                } else if(tableId === 'stuTable'){
+                    layer.open({
+                        type: 1,
+                        title: '编辑学生信息',
+                        area: ['500px', '380px'],
+                        content: '<div style="padding:22px;">'+
+                            '<div class="layui-form-item"><label>学号</label><input class="layui-input" value="'+ d.stuId +'" disabled></div>'+
+                            '<div class="layui-form-item"><label>姓名</label><input class="layui-input" id="eStuName" value="'+ d.stuName +'"></div>'+
+                            '<div class="layui-form-item"><label>班级ID</label><input class="layui-input" id="eClassId" value="'+ (d.classId || '') +'"></div>'+
+                            '<div class="layui-form-item"><label>性别</label><select id="eGender"><option value="男">男</option><option value="女">女</option></select></div>'+
+                            '<div class="layui-form-item"><label>状态</label><select id="eStatus"><option value="在读">在读</option><option value="休学">休学</option><option value="退学">退学</option></select></div>'+
+                            '</div>',
+                        btn: ['保存', '取消'],
+                        success: function(layero, index){
+                            setTimeout(function(){
+                                $("#eGender", layero).val(d.gender || '男');
+                                $("#eStatus", layero).val(d.status || '在读');
+                                layui.form.render('select');
+                            }, 50);
+                        },
+                        yes: function(index, layero){
+                            var genderVal = $("#eGender").val();
+                            if (!genderVal) genderVal = d.gender || '男';
+                            $.ajax({
+                                url: '/student/update',
+                                type: 'PUT',
+                                data: {
+                                    stuId: d.stuId,
+                                    stuName: $("#eStuName").val().trim(),
+                                    classId: $("#eClassId").val().trim(),
+                                    gender: genderVal,
+                                    status: $("#eStatus").val()
+                                },
+                                success: function(res){
+                                    if(res.code === 0){
+                                        layer.msg("修改成功");
+                                        table.reload("stuTable");
+                                        layer.close(index);
+                                    } else {
+                                        layer.msg(res.msg || "修改失败");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                } else if(tableId === 'deptTable'){
+                    layer.open({
+                        type: 1,
+                        title: '编辑院系',
+                        area: ['450px', '250px'],
+                        content: '<div style="padding:20px;">'+
+                            '<div class="layui-form-item"><label>院系名称</label><input class="layui-input" id="eDeptName" value="'+ d.deptName +'"></div>'+
+                            '</div>',
+                        btn: ['保存', '取消'],
+                        yes: function(index){
+                            $.ajax({
+                                url: '/department/update',
+                                type: 'PUT',
+                                contentType: 'application/json',
+                                data: JSON.stringify({ deptId: d.deptId, deptName: $("#eDeptName").val().trim() }),
+                                success: function(res){
+                                    if(res.code === 0){
+                                        layer.msg("修改成功");
+                                        table.reload("deptTable");
+                                        layer.close(index);
+                                    } else {
+                                        layer.msg(res.msg || "修改失败");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                } else if(tableId === 'majorTable'){
+                    layer.open({
+                        type: 1,
+                        title: '编辑专业',
+                        area: ['450px', '300px'],
+                        content: '<div style="padding:20px;">'+
+                            '<div class="layui-form-item"><label>专业名称</label><input class="layui-input" id="eMajorName" value="'+ d.majorName +'"></div>'+
+                            '<div class="layui-form-item"><label>所属院系ID</label><input class="layui-input" id="eMajorDeptId" value="'+ (d.deptId || '') +'"></div>'+
+                            '</div>',
+                        btn: ['保存', '取消'],
+                        yes: function(index){
+                            $.ajax({
+                                url: '/major/update',
+                                type: 'PUT',
+                                contentType: 'application/json',
+                                data: JSON.stringify({ majorId: d.majorId, majorName: $("#eMajorName").val().trim(), deptId: $("#eMajorDeptId").val().trim() }),
+                                success: function(res){
+                                    if(res.code === 0){
+                                        layer.msg("修改成功");
+                                        table.reload("majorTable");
+                                        layer.close(index);
+                                    } else {
+                                        layer.msg(res.msg || "修改失败");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                } else if(tableId === 'classTable'){
+                    layer.open({
+                        type: 1,
+                        title: '编辑班级',
+                        area: ['450px', '300px'],
+                        content: '<div style="padding:20px;">'+
+                            '<div class="layui-form-item"><label>班级名称</label><input class="layui-input" id="eClassName" value="'+ d.className +'"></div>'+
+                            '<div class="layui-form-item"><label>所属专业ID</label><input class="layui-input" id="eClassMajorId" value="'+ (d.majorId || '') +'"></div>'+
+                            '</div>',
+                        btn: ['保存', '取消'],
+                        yes: function(index){
+                            $.ajax({
+                                url: '/class/update',
+                                type: 'PUT',
+                                contentType: 'application/json',
+                                data: JSON.stringify({ classId: d.classId, className: $("#eClassName").val().trim(), majorId: $("#eClassMajorId").val().trim() }),
+                                success: function(res){
+                                    if(res.code === 0){
+                                        layer.msg("修改成功");
+                                        table.reload("classTable");
+                                        layer.close(index);
+                                    } else {
+                                        layer.msg(res.msg || "修改失败");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    layer.msg("该模块编辑功能尚未实现");
+                }
+            }
+
+            // ========== 删除 ==========
+            if(obj.event === 'del'){
+                layer.confirm("确定删除本条数据？", function(index){
+                    var url = '', reloadId = '';
+                    var requestType = 'DELETE';
+                    switch(tableId){
+                        case 'deptTable': url='/department/delete/'+d.deptId; break;
+                        case 'majorTable': url='/major/delete/'+d.majorId; break;
+                        case 'classTable': url='/class/delete/'+d.classId; break;
+                        case 'stuTable': url='/student/delete/'+d.stuId; break;
+                        case 'archiveTable': url='/archive/delete/'+d.id; break;
+                        case 'scoreInputTable': url='/score/delete/'+d.scoreId; break;
+                        case 'rewardTable': url='/rewardPunish/delete/'+d.rpId; break;
+                        case 'userTable': url='/user/delete/'+d.id; break;
+                        case 'dictTable': url='/dict/delete/'+d.id; break;
+                    }
+                    if(url){
+                        $.ajax({
+                            url: url,
+                            type: requestType,
+                            success: function(res){
+                                if(res.code === 0){
+                                    layer.msg("删除成功");
+                                    table.reload(reloadId || tableId);
+                                } else {
+                                    layer.msg(res.msg || "删除失败");
+                                }
+                            },
+                            error: function(){
+                                layer.msg("请求失败，请检查网络");
+                            }
+                        });
+                    } else {
+                        layer.msg("删除接口未定义");
+                    }
+                    layer.close(index);
+                });
+            }
+
+            // ========== 异动审核 ==========
+            if(obj.event === 'pass'){
+                $.ajax({
+                    url: '/change/check/audit/' + d.applyId + '?status=已通过',
+                    type: 'PUT',
+                    success: function(res){
+                        if(res.code === 0){
+                            layer.msg("审核通过");
+                            table.reload("checkTable");
+                        } else {
+                            layer.msg(res.msg || "操作失败");
+                        }
+                    }
+                });
+            }
+            if(obj.event === 'reject'){
+                layer.prompt({
+                    title: '请输入驳回原因',
+                    formType: 2
+                }, function(text, index){
+                    $.ajax({
+                        url: '/change/check/audit/' + d.applyId + '?status=已驳回',
+                        type: 'PUT',
+                        success: function(res){
+                            if(res.code === 0){
+                                layer.msg("已驳回");
+                                table.reload("checkTable");
+                                layer.close(index);
+                            } else {
+                                layer.msg(res.msg || "操作失败");
+                            }
+                        }
+                    });
+                });
+            }
+        }
+
+        // 统一绑定所有表格的工具条事件
+        table.on('tool(deptTable)', handleTableTool);
+        table.on('tool(majorTable)', handleTableTool);
+        table.on('tool(classTable)', handleTableTool);
+        table.on('tool(stuTable)', handleTableTool);
+        table.on('tool(archiveTable)', handleTableTool);
+        table.on('tool(scoreInputTable)', handleTableTool);
+        table.on('tool(rewardTable)', handleTableTool);
+        table.on('tool(checkTable)', handleTableTool);
+        table.on('tool(userTable)', handleTableTool);
+        table.on('tool(dictTable)', handleTableTool);
+
+        // 初始化页面元素渲染
+        layui.element.render();
+    });
+</script>
+</body>
+</html>

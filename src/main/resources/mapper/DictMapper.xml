@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.school.student_manage.mapper.DictMapper">
+
+    <select id="listAll" resultType="com.school.student_manage.entity.Dict">
+        SELECT id, dict_key, dict_value, sort
+        FROM dict
+        ORDER BY sort ASC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO dict (dict_key, dict_value, sort)
+        VALUES (#{dictKey}, #{dictValue}, #{sort})
+    </insert>
+
+    <update id="update">
+        UPDATE dict SET dict_key = #{dictKey}, dict_value = #{dictValue}, sort = #{sort}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM dict WHERE id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.school.student_manage.mapper.RewardPunishMapper">
+
+    <resultMap id="BaseResultMap" type="com.school.student_manage.entity.RewardPunish">
+        <id column="rp_id" property="rpId"/>
+        <result column="stu_id" property="stuId"/>
+        <result column="stu_name" property="stuName"/>
+        <result column="rp_type" property="rpType"/>
+        <result column="level_name" property="levelName"/>
+        <result column="amount" property="amount"/>
+        <result column="reason" property="reason"/>
+        <result column="rp_date" property="rpDate"/>
+    </resultMap>
+
+    <select id="listAll" resultMap="BaseResultMap">
+        SELECT rp_id, stu_id, stu_name, rp_type, level_name, amount, reason, rp_date
+        FROM reward_punish
+        ORDER BY rp_date DESC
+    </select>
+
+    <select id="listByStuId" resultMap="BaseResultMap">
+        SELECT rp_id, stu_id, stu_name, rp_type, level_name, amount, reason, rp_date
+        FROM reward_punish
+        WHERE stu_id = #{stuId}
+        ORDER BY rp_date DESC
+    </select>
+
+    <insert id="insert" parameterType="com.school.student_manage.entity.RewardPunish"
+            useGeneratedKeys="true" keyProperty="rpId">
+        INSERT INTO reward_punish (stu_id, stu_name, rp_type, level_name, amount, reason, rp_date)
+        VALUES (#{stuId}, #{stuName}, #{rpType}, #{levelName}, #{amount}, #{reason}, NOW())
+    </insert>
+
+    <update id="update" parameterType="com.school.student_manage.entity.RewardPunish">
+        UPDATE reward_punish
+        SET stu_id = #{stuId},
+        stu_name = #{stuName},
+        rp_type = #{rpType},
+        level_name = #{levelName},
+        amount = #{amount},
+        reason = #{reason}
+        WHERE rp_id = #{rpId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM reward_punish WHERE rp_id = #{rpId}
+    </delete>
+
+    <!-- 批量插入贪心分配结果 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO reward_punish (stu_id, stu_name, rp_type, level_name, amount, reason, rp_date)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.stuId}, #{item.stuName}, #{item.rpType}, #{item.levelName}, #{item.amount}, #{item.reason}, NOW())
+        </foreach>
+    </insert>
+
+    <!-- 查询学生平均分，用于贪心排序 -->
+    <select id="selectStudentAvgScore" resultType="java.util.Map">
+        SELECT s.stu_id, s.stu_name, AVG(sc.score) AS avg_score
+        FROM score sc
+        LEFT JOIN student s ON sc.stu_id = s.stu_id
+        GROUP BY s.stu_id, s.stu_name
+        ORDER BY avg_score DESC
+    </select>
+
+</mapper>

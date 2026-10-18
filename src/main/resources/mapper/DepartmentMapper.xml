@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 必须和接口的全路径完全一致 -->
+<mapper namespace="com.school.student_manage.mapper.DepartmentMapper">
+
+    <!-- 查询所有院系 -->
+    <select id="listAll" resultType="com.school.student_manage.entity.Department">
+        SELECT dept_id, dept_name FROM department
+        ORDER BY dept_id ASC
+    </select>
+
+    <!-- 新增院系，useGeneratedKeys开启主键回显，keyProperty对应实体类主键属性 -->
+    <insert id="insert" parameterType="com.school.student_manage.entity.Department"
+            useGeneratedKeys="true" keyProperty="deptId">
+        INSERT INTO department (dept_name)
+        VALUES (#{deptName})
+    </insert>
+
+    <!-- 修改院系 -->
+    <update id="update" parameterType="com.school.student_manage.entity.Department">
+        UPDATE department
+        SET dept_name = #{deptName}
+        WHERE dept_id = #{deptId}
+    </update>
+
+    <!-- 根据ID删除院系 -->
+    <delete id="deleteById">
+        DELETE FROM department WHERE dept_id = #{deptId}
+    </delete>
+
+    <!-- 根据ID查询单个院系 -->
+    <select id="getById" resultType="com.school.student_manage.entity.Department">
+        SELECT dept_id, dept_name FROM department
+        WHERE dept_id = #{deptId}
+    </select>
+
+</mapper>

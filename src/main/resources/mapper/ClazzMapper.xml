@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.school.student_manage.mapper.ClazzMapper">
+
+    <select id="listAll" resultType="com.school.student_manage.entity.Clazz">
+        SELECT class_id, class_name, major_id, student_count
+        FROM "class"
+        ORDER BY class_id ASC
+    </select>
+
+    <select id="listByMajorId" resultType="com.school.student_manage.entity.Clazz">
+        SELECT class_id, class_name, major_id, student_count
+        FROM "class"
+        WHERE major_id = #{majorId}
+        ORDER BY class_id ASC
+    </select>
+
+    <insert id="insert" parameterType="com.school.student_manage.entity.Clazz"
+            useGeneratedKeys="true" keyProperty="classId">
+        INSERT INTO "class" (class_name, major_id, student_count)
+        VALUES (#{className}, #{majorId}, 0)
+    </insert>
+
+    <update id="update" parameterType="com.school.student_manage.entity.Clazz">
+        UPDATE "class"
+        SET class_name = #{className}, major_id = #{majorId}
+        WHERE class_id = #{classId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM "class" WHERE class_id = #{classId}
+    </delete>
+
+    <select id="getById" resultType="com.school.student_manage.entity.Clazz">
+        SELECT class_id, class_name, major_id, student_count
+        FROM "class"
+        WHERE class_id = #{classId}
+    </select>
+
+</mapper>

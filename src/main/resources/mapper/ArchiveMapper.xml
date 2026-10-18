@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.school.student_manage.mapper.ArchiveMapper">
+    <select id="listAll" resultType="com.school.student_manage.entity.Archive">
+        SELECT id, stu_id, stu_name, file_url, upload_time FROM archive ORDER BY upload_time DESC
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO archive (stu_id, stu_name, file_url) VALUES (#{stuId}, #{stuName}, #{fileUrl})
+    </insert>
+    <update id="update">
+        UPDATE archive SET file_url = #{fileUrl} WHERE id = #{id}
+    </update>
+    <delete id="deleteById">
+        DELETE FROM archive WHERE id = #{id}
+    </delete>
+</mapper>

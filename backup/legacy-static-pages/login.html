@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>高校学籍管理系统</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f7f7f7;
+        }
+        .login-box {
+            width: 460px;
+            padding: 40px;
+            background: #fff;
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .item {
+            margin: 20px 0;
+        }
+        input,select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+<div class="login-box">
+    <h1>高校学籍管理系统</h1>
+    <div class="item">
+        <label>账号</label>
+        <br>
+        <input type="text" id="username" placeholder="管理员填admin/学生填学号">
+    </div>
+    <div class="item">
+        <label>密码</label>
+        <br>
+        <input type="password" id="password" placeholder="请输入密码">
+    </div>
+    <div class="item">
+        <label>身份</label>
+        <br>
+        <select id="role">
+            <option value="">请选择身份</option>
+            <option value="admin">管理员</option>
+            <option value="student">学生</option>
+        </select>
+    </div>
+    <div class="item">
+        <button onclick="login()">登录</button>
+    </div>
+</div>
+
+<script>
+    function login(){
+        let u = document.getElementById("username").value.trim();
+        let p = document.getElementById("password").value.trim();
+        let r = document.getElementById("role").value;
+        if(!u){
+            alert("请输入账号");
+            return;
+        }
+        if(!p){
+            alert("请输入密码");
+            return;
+        }
+        if(!r){
+            alert("请选择身份");
+            return;
+        }
+        // 原生AJAX请求
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST","/user/login",true);
+        xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+        xhr.onload = function(){
+            let res = JSON.parse(xhr.responseText);
+            if(res.code === 0){
+                if(r === "admin"){
+                    location.href = "admin.html";
+                }else{
+                    location.href = "student.html";
+                }
+            }else{
+                alert(res.msg);
+            }
+        }
+        xhr.send("username="+u+"&password="+p+"&role="+r);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.school.student_manage.mapper.MajorMapper">
+
+    <select id="listAll" resultType="com.school.student_manage.entity.Major">
+        SELECT major_id, major_name, dept_id FROM major
+        ORDER BY major_id ASC
+    </select>
+
+    <select id="listByDeptId" resultType="com.school.student_manage.entity.Major">
+        SELECT major_id, major_name, dept_id FROM major
+        WHERE dept_id = #{deptId}
+        ORDER BY major_id ASC
+    </select>
+
+    <insert id="insert" parameterType="com.school.student_manage.entity.Major"
+            useGeneratedKeys="true" keyProperty="majorId">
+        INSERT INTO major (major_name, dept_id)
+        VALUES (#{majorName}, #{deptId})
+    </insert>
+
+    <update id="update" parameterType="com.school.student_manage.entity.Major">
+        UPDATE major
+        SET major_name = #{majorName}, dept_id = #{deptId}
+        WHERE major_id = #{majorId}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM major WHERE major_id = #{majorId}
+    </delete>
+
+    <select id="getById" resultType="com.school.student_manage.entity.Major">
+        SELECT major_id, major_name, dept_id FROM major
+        WHERE major_id = #{majorId}
+    </select>
+
+</mapper>

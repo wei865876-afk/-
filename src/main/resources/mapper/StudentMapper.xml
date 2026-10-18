@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.school.student_manage.mapper.StudentMapper">
+
+    <!-- 查询学生列表，联查班级、专业、院系 -->
+    <select id="selectAll" resultType="com.school.student_manage.entity.Student">
+        SELECT
+        s.stu_id,
+        s.stu_name,
+        s.gender,
+        c.class_name,
+        m.major_name AS major,
+        d.dept_name AS dept,
+        s.status,
+        s.class_id
+        FROM student s
+        LEFT JOIN "class" c ON s.class_id = c.class_id
+        LEFT JOIN major m ON c.major_id = m.major_id
+        LEFT JOIN department d ON m.dept_id = d.dept_id
+        ORDER BY s.stu_id
+    </select>
+
+    <!-- 查询学生完整信息（调用视图） -->
+    <select id="selectFullInfo" resultType="com.school.student_manage.entity.Student">
+        SELECT
+        stu_id,
+        stu_name,
+        gender,
+        dept,
+        major,
+        classname
+        FROM v_student_full_info
+        ORDER BY stu_id ASC
+    </select>
+
+    <!-- 新增学生 -->
+    <insert id="insert" parameterType="com.school.student_manage.entity.Student">
+        INSERT INTO student (stu_id, stu_name, class_id, gender, status, entry_date)
+        VALUES (#{stuId}, #{stuName}, #{classId}, COALESCE(#{gender}, '男'), #{status}, NOW())
+    </insert>
+
+    <!-- 更新学生：gender 为 null 或空时不修改该字段 -->
+    <update id="updateById">
+        UPDATE student
+        SET stu_name = #{stuName},
+        class_id = #{classId},
+        <if test="gender != null and gender != ''">
+            gender = #{gender},
+        </if>
+        status = #{status}
+        WHERE stu_id = #{stuId}
+    </update>
+
+    <!-- 删除学生 -->
+    <delete id="deleteByStuId">
+        DELETE FROM student WHERE stu_id = #{stuId}
+    </delete>
+
+</mapper>

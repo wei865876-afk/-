@@ -1,0 +1,39 @@
+server:
+  port: 8080
+  # 反向代理 / 内网穿透（ngrok、cloudflared、nginx 等）场景下，
+  # 让 Spring 采用 X-Forwarded-Proto / X-Forwarded-Host 生成的正确协议与域名，
+  # 否则重定向会退化成 http，导致 https 访问异常。本地直连时无副作用。
+  forward-headers-strategy: framework
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://127.0.0.1:5432/student_manage?sslmode=disable
+    username: postgres
+    password: 20051224
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.school.student_manage.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+# ============================================================
+# AI 能力配置（OpenAI 兼容协议：DeepSeek / 通义 / 智谱 / OpenAI / vLLM / Ollama-v1）
+# 不填 api-key 时自动使用内置"本地规则引擎"兜底，功能完整可演示；
+# 填入密钥后即切换为真实大模型（推荐用环境变量注入，不要提交到仓库）。
+#   Windows PowerShell:  $env:AI_API_KEY="sk-xxx"; .\mvnw.cmd spring-boot:run
+# ============================================================
+ai:
+  enabled: true
+  mode: auto                 # auto: 有 key 走远程，无 key 走本地 | remote | local
+  base-url: https://api.deepseek.com/v1
+  api-key: ${AI_API_KEY:}
+  model: deepseek-chat
+  embedding-model: ${AI_EMBEDDING_MODEL:}   # 可选，如 bge-m3 / text-embedding-3-small
+  temperature: 0.3
+  max-tokens: 1600
+  timeout-seconds: 90
+  max-tool-rounds: 5
+  sql-max-rows: 200
+  sql-timeout-seconds: 8
+  rag-top-k: 4
+  org-name: 示例大学
